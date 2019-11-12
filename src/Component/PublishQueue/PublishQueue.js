@@ -29,9 +29,10 @@ class PublishQueue extends React.Component{
                                     }});
             result.data.queue.forEach((e,i)=>{
                 r.push(<tr key={i}>
-                    <td>{e.title}</td>
-                    <td></td>
                     <td>{e.updated_at}</td>
+                    <td>{e.entry.title}</td>
+                    <td>{e.entry.version}</td>
+                    <td>{e.environment[0]}</td>
                 </tr>)
             })
             this.setState({isauth:true,r:r})
@@ -56,18 +57,12 @@ class PublishQueue extends React.Component{
                        <tr>
                         <td>Time</td>
                         <td>Entry</td>
-                        <td>Content Type</td>
                         <td>Version</td>
-                        <td>User</td>
                         <td>Environemt</td>
-                        <td>Status</td>
                        </tr>
                    </thead>
                    <tbody>
                        <tr>
-                           <td></td>
-                           <td></td>
-                           <td></td>
                            <td></td>
                            <td></td>
                            <td></td>
