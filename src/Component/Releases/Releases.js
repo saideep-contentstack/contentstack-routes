@@ -27,11 +27,11 @@ class Releases extends React.Component{
                                         "api_key":api_key
                                     }});
             result.data.releases.forEach((e,i)=>{
-                r.push(<tr key={i}>
-                    <td>{e.title}</td>
-                    <td></td>
-                    <td>{e.updated_at}</td>
-                </tr>)
+                // r.push(<tr key={i}>
+                //     <td></td>
+                //     <td></td>
+                //     <td></td>
+                // </tr>)
             })
             this.setState({isauth:true,r:r})
         }
@@ -52,18 +52,14 @@ class Releases extends React.Component{
                <table>
                    <thead>
                        <tr>
-                        <td>Time</td>
-                        <td>Entry</td>
-                        <td>Content Type</td>
+                        <td>Name</td>
                         <td>Version</td>
-                        <td>User</td>
-                        <td>Environemt</td>
-                        <td>Status</td>
+                        <td>Language</td>
+                        <td>Action</td>
                        </tr>
                    </thead>
                    <tbody>
                        <tr>
-                           <td></td><td></td><td></td>
                            <td></td><td></td><td></td>
                            <td></td>
                        </tr>
