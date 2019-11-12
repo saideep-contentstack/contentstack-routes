@@ -191,6 +191,9 @@ const routes = [
   {
     path:"/",
     component:Index,
+    middleware:[],
+    redirect:'',
+    routes:[],
   },
   {
     path:"/*",
