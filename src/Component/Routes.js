@@ -1,4 +1,5 @@
 import NotFound from './NotFound/NotFound';
+import Index from './Index/Index';
 import Login from './Login/Login';
 import Stacks from './Stack/Stack';
 import Dashboard from './Dashboard/Dashboard';
@@ -188,11 +189,15 @@ const routes = [
     routes: [],
   },
   {
+    path:"/",
+    component:Index,
+  },
+  {
     path:"/*",
     component:NotFound,
     middleware:[],
     redirect:'',
     routes:[],
-  }
+  },
 ];
 export default routes;
