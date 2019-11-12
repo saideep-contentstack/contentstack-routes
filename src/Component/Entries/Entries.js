@@ -46,7 +46,7 @@ import LoadingComponent from '../LoadingComponent/LoadingComponent';
                                     }
                             else{
                                 let entryUid=result.data.entries["0"].uid
-                            this.setState({isauth:false,render:<Redirect to={`/stack/blt7b4423f85ca9cec0/content-type/${content_type}/en-us/entry/${entryUid}/edit`}/>})
+                            this.setState({isauth:false,render:<Redirect to={`/stack/${stackId}/content-type/${content_type}/en-us/entry/${entryUid}/edit`}/>})
                         }
                         }
                 }});
