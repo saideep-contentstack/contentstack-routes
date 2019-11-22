@@ -1,7 +1,7 @@
 import React from 'react';
 import {Redirect} from 'react-router-dom';
 
-export default class NotFound extends React.Component{
+export default class Index extends React.Component{
     constructor(props){
         super(props);
         this.state={
