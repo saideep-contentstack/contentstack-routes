@@ -1,112 +1,84 @@
 /* eslint-disable no-undef */
-import React, {Fragment} from 'react';
-import {Link,Switch,Redirect} from 'react-router-dom';
+import React, {useState,useEffect} from 'react';
+import {Link,Switch,useParams,useHistory} from 'react-router-dom';
 import RouteWithSubRoutes from '../RouteWithSubRoutes/RouteWithSubRoutes';
 import LoadingComponent from '../LoadingComponent/LoadingComponent';
- export default class Entries extends React.Component{
-     constructor(props){
-         super(props)
-         this.state={
-             stackUid:true,
-             contentType:true,
-             r:<LoadingComponent/>,
-              isauth:false,
-             render:<LoadingComponent/>
+import Axios from 'axios';
+
+export default function Entries(props){
+  const [render,setRender]=useState(<LoadingComponent/>);
+  const history=useHistory();
+  const parameter=useParams();
+  useEffect(()=>{
+    const getEntries=async()=>{
+      let stackKey=props.location.pathname.split('/')[2];
+      let contentType=parameter.id;
+      let render=[];
+      try{
+      let result_contentTypes=await Axios.get('/v3/content_types',
+      {
+        headers:{
+          api_key:stackKey
+        }
+      });
+      let result_entries=await Axios.get(`/v3/content_types/${contentType}/entries`,
+      {
+        headers:{
+          api_key:stackKey
+        }
+      });
+      result_contentTypes.data.content_types.forEach((e,i)=>{
+        if(e.options.singleton && (e.uid===contentType)){
+          if(result_entries){
+            if(result_entries.data.entries.length===0){
+              history.replace(`/stack/${stackKey}/content-type/${contentType}/en-us/entry/create`)
+            }else{
+              let entryUid=result_entries.data.entries["0"].uid
+              history.replace(`/stack/${stackKey}/content-type/${contentType}/en-us/entry/${entryUid}/edit`)
             }
-            this.logoutHandler=this.logoutHandler.bind(this);
-     }
-     async logoutHandler () {
-        let result = await axios.delete ('/user-session');
-        this.setState ({isauth: false, render: <Redirect noThrow to="/login" />});
+          }
+        }
+      });
+      if(result_entries){
+        result_entries.data.entries.forEach((e,i)=>{
+          render.push(
+            <tr key={i}>
+              <td><Link to={`/stack/${stackKey}/content-type/${contentType}/en-us/entry/${e.uid}/edit`}>{e.title}</Link></td>
+              <td>{e.description}</td>
+              <td>{e.updated_at}</td>
+            </tr>
+          )
+        })
       }
-     async componentDidMount(){
-         try{
-        let r=[]
-        let url=window.location.pathname;
-        let stackId=url.split('/')[2]
-        const callApi=async ()=>{
-                let content_type=window.location.pathname.split('/')[4];
-                let result1=await axios.get('/v3/content_types',
-                                    {headers:{
-                                        "api_key":stackId
-                                    }});
-                try{
-                    var result=await axios.get(`/v3/content_types/${content_type}/entries`,
-                                    {headers:{
-                                        "api_key":stackId
-                                    }});
-                }catch{
-                    console.log("Error fetching entries")
-                }
-                result1.data.content_types.forEach((e,i)=>{
-                        if(e.options.singleton&& (e.uid===content_type)) {
-                            if(result){
-                                if(result.data.entries.length===0){
-                                    this.setState({isauth:false,render:<Redirect to={`/stack/${stackId}/content-type/${content_type}/en-us/entry/create`}/>})
-                                    }
-                            else{
-                                let entryUid=result.data.entries["0"].uid
-                            this.setState({isauth:false,render:<Redirect to={`/stack/${stackId}/content-type/${content_type}/en-us/entry/${entryUid}/edit`}/>})
-                        }
-                        }
-                }});
-                if(result){
-            result.data.entries.forEach((e,i)=>{
-                r.push(<tr key={i}>
-                    <td><Link to={`/stack/${stackId}/content-type/${content_type}/en-us/entry/${e.uid}/edit`}>{e.title}</Link></td>
-                    <td>{e.description}</td>
-                    <td>{e.updated_at}</td>
-                </tr>)
-            })
-        }
-            this.setState({isauth:true,r:r})
-        }
-        try{
-        callApi()
-        }catch{
-            console.log("Error at api")
-        }
-         }catch{
-             console.log("from catch");
-         }
+      setRender(render);
+    }catch{}
     }
-
- render(){
-    let t=this.state.render
-    if(this.state.isauth){
-        return(
-            <div>
-
-            <div className="message-display">Entries</div>
-            <br />
-            <table>
-                <thead>
-                    <tr>
-                     <td>Title</td>
-                     <td>Description</td>
-                     <td>Updated at</td>
-                    </tr>
-                </thead>
-                <tbody>
-                {this.state.r}
-                </tbody>
-                <tfoot></tfoot>
-            </table>
-            {this.props.routes?
-           <Switch>
-           {this.props.routes.map (route => {
-                    return <RouteWithSubRoutes key={route.path} {...route} />
-                })}
-           </Switch>:null}
-        </div>
-        )
+    getEntries();
+  },[])
+  
+  return(
+    <div>
+    <div className="message-display">Entries</div>
+    <br />
+    <table>
+        <thead>
+            <tr>
+             <td>Title</td>
+             <td>Description</td>
+             <td>Updated at</td>
+            </tr>
+        </thead>
+        <tbody>
+        {render}
+        </tbody>
+        <tfoot></tfoot>
+    </table>
+    {props.routes?
+   <Switch>
+   {props.routes.map (route => {
+            return <RouteWithSubRoutes key={route.path} {...route} />
+        })}
+   </Switch>:null}
+</div>
+  )
 }
-    else{
-        return(
-            <Fragment>
-                {t}
-            </Fragment>
-        )
-    }
-}
- }
