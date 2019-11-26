@@ -1,33 +1,20 @@
 import React from 'react';
-import {Redirect} from 'react-router-dom';
+import {useHistory} from 'react-router-dom';
 
-export default class Index extends React.Component{
-    constructor(props){
-        super(props);
-        this.state={
-            login:""
-        }
-        this.goBackHandler=this.goBackHandler.bind(this);
+export default function Index () {
+    const history=useHistory();
+    const goToLoginHandler=()=>{
+        history.replace("/login");
     }
-    
-
-    goBackHandler(){
-        this.setState({
-            login:<Redirect to="/login"/>
-        })
-    }
-    render(){
-        return(
-            <div>
-                {this.state.login}
-                <nav className={`notFoundNav`}>
-                    <p>ContentStack</p>
-                </nav>
-                <div className={`notFoundDiv`}>
-                <h3>Click below to login!</h3>
-                <button onClick={this.goBackHandler} >Login</button>
-                </div>
-            </div>
-        )
-    }
+  return (
+    <div>
+      <nav className={`notFoundNav`}>
+        <p>ContentStack</p>
+      </nav>
+      <div className={`notFoundDiv`}>
+        <h3>Click below to login!</h3>
+        <button onClick={goToLoginHandler}>Login</button>
+      </div>
+    </div>
+  );
 }
