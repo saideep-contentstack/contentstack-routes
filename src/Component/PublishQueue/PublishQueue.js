@@ -1,58 +1,41 @@
-/* eslint-disable no-undef */
-import React, {Fragment} from 'react';
-import {Switch,Redirect} from 'react-router-dom'
+import React, {useState,useEffect} from 'react';
+import {Switch,useParams} from 'react-router-dom';
 import RouteWithSubRoutes from '../RouteWithSubRoutes/RouteWithSubRoutes';
 import LoadingComponent from '../LoadingComponent/LoadingComponent';
+import Axios from 'axios';
 
-class PublishQueue extends React.Component{
-    constructor(props){
-        super(props)
-        this.state={
-            isauth:false,
-            render:<LoadingComponent/>
+export default function PublishQueue(props){
+    const parameter=useParams();
+  const [render,setRender]=useState(<tr><LoadingComponent/></tr>);
+  useEffect(()=>{
+    const stackKey=parameter.id;
+    const getPublishQueue= async()=>{
+      let render=[];
+      let result =await Axios.get('/v3/publish-queue',
+      {
+        headers:{
+          "api_key":stackKey
         }
-        this.logoutHandler=this.logoutHandler.bind(this);
-    }
-    async logoutHandler () {
-        let result = await axios.delete ('/user-session');
-        console.log (result);
-        this.setState ({isauth: false, render: <Redirect to="/login" />});
-      }
-    async componentDidMount(){
-       let r=[];
-       let api_key=window.location.pathname.split("/")[2];
-        const callApi=async ()=>{
-            try{
-            let result=await axios.get('/v3/publish-queue',
-                                    {headers:{
-                                        "api_key":api_key
-                                    }});
-            result.data.queue.forEach((e,i)=>{
-                r.push(<tr key={i}>
-                    <td>{e.updated_at}</td>
-                    <td>{e.entry.title}</td>
-                    <td>{e.entry.version}</td>
-                    <td>{e.environment[0]}</td>
-                </tr>)
-            })
-            this.setState({isauth:true,r:r})
-            }catch{
-            }
-        }
-        try{
-        callApi()
-        }catch{
-            console.log("Error at api")
-        }
-       }
-   render(){
-    let t=this.state.render
-    if(this.state.isauth){
-     return(
-         <React.Fragment>
-            <div className="message-display">Publishes goes here</div>
-            <br />
-               <table>
+      });
+    result.data.queue.forEach((e,i)=>{
+        render.push(<tr key={i}>
+            <td>{e.updated_at}</td>
+            <td>{e.entry.title}</td>
+            <td>{e.entry.version}</td>
+            <td>{e.environment[0]}</td>
+        </tr>)
+    })
+    setRender(render)
+  }
+  getPublishQueue();
+  },[])
+
+  return(
+    <>
+      <div>
+        <div className="message-display">Publish queue goes here</div>
+        <br/>
+        <table>
                    <thead>
                        <tr>
                         <td>Time</td>
@@ -68,27 +51,17 @@ class PublishQueue extends React.Component{
                            <td></td>
                            <td></td>
                        </tr>
-                   {this.state.r}
+                   {render}
                    </tbody>
                    <tfoot></tfoot>
                </table>
-               {this.props.routes?
+        {props.routes?
            <Switch>
-           {this.props.routes.map (route => {
+           {props.routes.map (route => {
                     return <RouteWithSubRoutes key={route.path} {...route} />
                 })}
            </Switch>:null}
-               </React.Fragment>
-        )
+      </div>
+    </>
+  )
 }
-    else{
-        return(
-            <Fragment>
-                {t}
-            </Fragment>
-        )
-    }
- }
-}
-
-export default PublishQueue;
