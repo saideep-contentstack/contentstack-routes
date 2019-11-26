@@ -1,2 +1,2 @@
 # contentstack-routes
-Contentstack routes using react router
+Contentstack routes using react hooks and react router.
