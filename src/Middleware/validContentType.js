@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
-let validContentType=()=>{return new Promise((resolve,reject)=>{
+let validContentType=(data)=>{return new Promise((resolve,reject)=>{
+    const data="Some data";
     try{
         let url=window.location.pathname
         let content_type=url.split('/')[4]
@@ -8,7 +9,7 @@ let validContentType=()=>{return new Promise((resolve,reject)=>{
         .then((response)=>{
             response.data.content_types.forEach((e)=>{
                 if(e.uid === content_type){
-                    resolve(true)
+                    resolve({valid:true,data:data});
                 }
         })
         reject(false)
