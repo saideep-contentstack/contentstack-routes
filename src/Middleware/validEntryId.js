@@ -1,5 +1,6 @@
 /* eslint-disable no-undef */
-let validEntryId=()=>{return new Promise((resolve,reject)=>{
+let validEntryId=(data)=>{return new Promise((resolve,reject)=>{
+    const data="Some data";
     try{
         let url=window.location.pathname
         let stackIdArray=url.split('/')
@@ -14,7 +15,7 @@ let validEntryId=()=>{return new Promise((resolve,reject)=>{
                 })
         .then((response)=>{
             response.data.entries.forEach((e)=>{
-                if(e.uid===entryId) resolve(true);
+                if(e.uid===entryId) resolve({valid:true,data:data});
             })
             reject(false);
         }).catch((error)=>{
