@@ -42,10 +42,17 @@ export default function RouteWithSubRoutes (props) {
         });
     } else {
       let result = [];
-      for (let i = 0; i < props.middleware.length; i++) {
-        result.push (await props.middleware[i] ());
+      let answer;
+      let prevResolved=0;
+      try{
+        for (let i = 0; i < props.middleware.length; i++) {
+          result.push (await props.middleware[i] (prevResolved));
+          prevResolved=result[i].data;
+        }
+        answer = result.every (e => e === true);
+      }catch{
+        answer=undefined;
       }
-      let answer = result.every (e => e === true);
       if (answer) {
         let Component = props.component;
         let routes=props.routes
